@@ -1,6 +1,16 @@
 using System;
 using System.Runtime.InteropServices;
 
+/// </summary>
+/// <summary>
+/// Represents a method like:
+/// 
+/// <code>
+/// receive_in_string {
+///     return: mstring @moved;
+/// }
+/// </code>
+/// </summary>
 public class StringReturnMoved
 {
     [DllImport("mylib")]

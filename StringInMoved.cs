@@ -1,6 +1,17 @@
 using System;
 using System.Runtime.InteropServices;
 
+/// <summary>
+/// Represents a method like:
+/// 
+/// <code>
+/// receive_in_string {
+///     params {
+///         @in msg: mstring @moved;
+///     }
+/// }
+/// </code>
+/// </summary>
 public class StringInMoved
 {
     [DllImport("mylib")]

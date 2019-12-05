@@ -1,6 +1,16 @@
 using System;
 using System.Runtime.InteropServices;
 
+/// <summary>
+/// Represents a method like:
+/// 
+/// <code>
+/// receive_in_string {
+///     params {
+///         @in msg: string;
+///     }
+/// }
+/// </code>
 public class StringIn
 {
     [DllImport("mylib")]
