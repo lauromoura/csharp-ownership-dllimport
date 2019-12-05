@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-internal class StringReturnNonOwnMarshaler : ICustomMarshaler
+internal class StringReturnNonMovedMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -31,6 +31,6 @@ internal class StringReturnNonOwnMarshaler : ICustomMarshaler
 
     public static ICustomMarshaler GetInstance(string cookie)
     {
-        return new StringReturnNonOwnMarshaler();
+        return new StringReturnNonMovedMarshaler();
     }
 }
