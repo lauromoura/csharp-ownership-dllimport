@@ -15,12 +15,33 @@ with or without changes of ownership, like eolian's `@move` tag.
     - Virtual method implementations
 
 
+## Marshaler semantics
+
+* In parameter from C# calling C
+    * `MarshalManagedToNative`
+    * `CleanupNativeData`
+        - To cleanup the allocated data above
+
+* In parameter from C calling C#
+    * `MarshalNativeToManaged`
+    * `CleanupManagedData`
+
+* Return value C# calling C
+    * `MarshalNativeToManaged`
+    * `CleanupNativeData`
+        - To clean up the data we received from C
+
+* Return value C calling C#
+    * `MarshalManagedToNative`
+        - Beware of leaking memory in non-owned contexts
+    * `CleanupManagedData`
+
 ## Example: strings
 
 - `@in string`: C# calling C
     - Convert to native pointer
     - C# can deallocate the native after returning from the C method
-    - Could be done with default string marshaling (greedy)
+    - Could be done with default string marshaling\
 
 - `@in string`: C calling C#
     - Plain string marshalling seems to work with manual testing.
@@ -30,14 +51,19 @@ with or without changes of ownership, like eolian's `@move` tag.
     - Must allocate a new Native one and give it to C
     - Use custom marshaler
         - MarshalManagedToNative
-        - CleanUpNativeData (Must be a nop to keep ownership to C)
+            - Called before entering C
+        - CleanUpNativeData
+            - Called after returning from C
 
 - `@in string @move`: C calling C#
     - C# doesn't seems to be taking ownership.
         - Valgrind shows leak with default marshaling
     - Use Custom Marshalling
         - MarshalNativeToManaged
+            - Called before entering C# cb
+            - Must free the Native datahere
         - CleanupManagedData
+            - Called after returning to C
 
 - `return string`: C# calling C
     - Kaboooms with default marshalling
@@ -50,7 +76,7 @@ with or without changes of ownership, like eolian's `@move` tag.
     - But could kaboom?
 
 - `return string @move`: C# calling C
-    - Plain marshalling
+    - Default marshalling?
 
 - `return string @move`: C calling C#
-    - TODO
+    - Default marshalling?
