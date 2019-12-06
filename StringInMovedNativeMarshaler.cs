@@ -1,12 +1,14 @@
 using System;
 using System.Runtime.InteropServices;
 
-internal class StringInMovedMarshaler : ICustomMarshaler
+internal class StringInMovedNativeMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
         // Console.WriteLine($"MarshalNativeToManaged called with pNativeData 0x{pNativeData.ToInt64():x}");
-        return Marshal.PtrToStringUTF8(pNativeData);
+        var managedStr = Marshal.PtrToStringUTF8(pNativeData);
+        MemoryNative.my_free(pNativeData);
+        return managedStr;
     }
 
     public IntPtr MarshalManagedToNative(object managedObject)
@@ -19,7 +21,6 @@ internal class StringInMovedMarshaler : ICustomMarshaler
     public void CleanUpNativeData(IntPtr pNativeData)
     {
         // Console.WriteLine($"CleanUpNativeData called with pNativeData 0x{pNativeData.ToInt64():x}");
-        // Called from In
     }
 
     public void CleanUpManagedData(object managedObject)
@@ -35,7 +36,7 @@ internal class StringInMovedMarshaler : ICustomMarshaler
     {
         if (instance == null)
         {
-            instance = new StringInMovedMarshaler();
+            instance = new StringInMovedNativeMarshaler();
         }
         return instance;
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 internal class StringReturnNonMovedMarshaler : ICustomMarshaler
 {
@@ -9,11 +10,24 @@ internal class StringReturnNonMovedMarshaler : ICustomMarshaler
         return Marshal.PtrToStringUTF8(pNativeData);
     }
 
+    private List<IntPtr> cachedPtrs = new List<IntPtr>();
+
     public IntPtr MarshalManagedToNative(object managedObject)
     {
         IntPtr pNativeData = Marshal.StringToHGlobalAnsi(managedObject as string);
         Console.WriteLine($"MarshalManagedToNative returning string 0x{pNativeData.ToInt64():x}");
+        cachedPtrs.Add(pNativeData);
         return pNativeData;
+        // return IntPtr.Zero;
+    }
+
+    public void Cleanup()
+    {
+        foreach (var ptr in cachedPtrs)
+        {
+            Marshal.FreeHGlobal(ptr);
+        }
+        cachedPtrs = new List<IntPtr>();
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
@@ -29,8 +43,14 @@ internal class StringReturnNonMovedMarshaler : ICustomMarshaler
 
     public int GetNativeDataSize() => -1;
 
+    private static ICustomMarshaler instance = null;
+
     public static ICustomMarshaler GetInstance(string cookie)
     {
-        return new StringReturnNonMovedMarshaler();
+        if (instance == null)
+        {
+            instance = new StringReturnNonMovedMarshaler();
+        }
+        return instance;
     }
 }

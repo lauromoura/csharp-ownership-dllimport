@@ -22,16 +22,17 @@ public class StringIn
 
     public static void in_string_cb(string msg)
     {
-        Console.WriteLine($"Called InCb with msg [{msg}]");
+        // Console.WriteLine($"Called InCb with msg [{msg}]");
+        int x = msg.Length;
     }
 
     public void DoIt()
     {
-        Console.WriteLine("=== Basic in string methods");
-        Console.WriteLine();
+        // Console.WriteLine("=== Basic in string methods");
+        // Console.WriteLine();
         receive_in_string("Some String that should not leak");
-        Console.WriteLine();
+        // Console.WriteLine();
         call_in_string(in_string_cb);
-        Console.WriteLine();
+        // Console.WriteLine();
     }
 }
